@@ -355,7 +355,7 @@
     // Redireciona 3 segundos depois para o link real
     setTimeout(() => {
       window.location.href = destUrl;
-    }, 3000);
+    }, 500);
   })();
 </script>
 <div class="footer">
