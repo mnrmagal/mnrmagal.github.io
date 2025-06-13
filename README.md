@@ -4,8 +4,6 @@
 javascript:window.location.href='https://cebolitos.vercel.app/';
 
 
-''''
-
 
 <p align="center">
   <a href="https://mnrmagal.github.io" target="_blank">🌐 acessar o site</a>
